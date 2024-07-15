@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.CategoryDao;
 import org.yearup.data.ProductDao;
-import org.yearup.data.ProfileDao;
 import org.yearup.models.Category;
 import org.yearup.models.Product;
 
@@ -95,8 +94,14 @@ public class CategoriesController
 
     // add annotation to call this method for a DELETE action - the url path must include the categoryId
     // add annotation to ensure that only an ADMIN can call this function
-    public void deleteCategory(@PathVariable int id)
-    {
-        // delete the category by id
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable int id) {
+        try {
+            categoryDao.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.toString());
+        }
     }
 }

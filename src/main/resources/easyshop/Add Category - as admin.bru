@@ -1,0 +1,33 @@
+meta {
+  name: Add Category - as admin
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/categories
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+      "name": "Demo",
+      "description": "Some demo category."
+  }
+}
+
+tests {
+  // bru.setEnvVar("newCategoryId", pm.response.json().categoryId)
+  
+  var name = pm.response.json().name;
+  
+  test("Category insert as admin should succeed", function() {
+      expect(res.getStatus()).to.equal(201);
+      pm.expect(name).to.equal("Demo");
+  });
+}

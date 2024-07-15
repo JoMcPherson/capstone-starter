@@ -1,0 +1,24 @@
+meta {
+  name: Create Order
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/orders
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+tests {
+  var items = pm.response.json().lineItems;
+  
+  test("Create should return order details", function() {
+      expect(res.getStatus()).to.equal(200);
+      pm.expect(items.length).to.equal(2);
+  });
+}

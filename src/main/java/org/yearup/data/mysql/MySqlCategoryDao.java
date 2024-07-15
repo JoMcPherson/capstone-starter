@@ -104,7 +104,25 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     @Override
     public void delete(int categoryId)
     {
-        // delete category
+        String sql = """
+            DELETE FROM shopping_cart WHERE product_id IN (SELECT products.product_id FROM products WHERE category_id = ?);
+            DELETE FROM products WHERE category_id = ?;
+            DELETE FROM categories WHERE category_id = ?;
+            """;
+
+        try (Connection connection = getConnection())
+        {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, categoryId);
+            statement.setInt(2, categoryId);
+            statement.setInt(3, categoryId);
+
+            statement.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     private Category mapRow(ResultSet row) throws SQLException
@@ -122,5 +140,4 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 
         return category;
     }
-
 }

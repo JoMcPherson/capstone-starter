@@ -1,0 +1,17 @@
+meta {
+  name: Add Product to Cart - no auth - should fail
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/cart/products/12
+  body: none
+  auth: none
+}
+
+tests {
+  test("Add to cart without login should fail", function() {
+      expect(res.getStatus()).to.equal(401);
+  });
+}

@@ -1,0 +1,28 @@
+meta {
+  name: Delete Category - as admin
+  type: http
+  seq: 10
+}
+
+delete {
+  url: {{baseUrl}}/categories/{{newCategoryId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+      "name": "Demo",
+      "description": "Some demo category."
+  }
+}
+
+tests {
+  test("Delete new category should succeed", function() {
+      expect(res.getStatus()).to.equal(204);
+  });
+}

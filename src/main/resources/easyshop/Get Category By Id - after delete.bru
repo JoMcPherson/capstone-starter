@@ -1,0 +1,17 @@
+meta {
+  name: Get Category By Id - after delete
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/categories/{{newCategoryId}}
+  body: none
+  auth: none
+}
+
+tests {
+  test("Get new category after delete should not be found ", function() {
+      expect(res.getStatus()).to.equal(404);
+  });
+}

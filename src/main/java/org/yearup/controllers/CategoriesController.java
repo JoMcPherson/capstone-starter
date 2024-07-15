@@ -65,12 +65,19 @@ public class CategoriesController
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    // add annotation to call this method for a POST action
-    // add annotation to ensure that only an ADMIN can call this function
-    public Category addCategory(@RequestBody Category category)
+    @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Category> addCategory(@RequestBody Category category)
     {
-        // insert the category
-        return null;
+        try
+        {
+            categoryDao.create(category);
+        }
+        catch(Exception ex)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
+        return new ResponseEntity<>(category, HttpStatus.NO_CONTENT);
     }
 
     // add annotation to call this method for a PUT (update) action - the url path must include the categoryId

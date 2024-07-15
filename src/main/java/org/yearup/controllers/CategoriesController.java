@@ -78,9 +78,10 @@ public class CategoriesController
     // add annotation to ensure that only an ADMIN can call this function
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void deleteCategory(@PathVariable int id) {
+    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable int id) {
         try {
             categoryDao.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.toString());
         }

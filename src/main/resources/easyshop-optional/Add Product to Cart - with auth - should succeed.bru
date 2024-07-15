@@ -1,0 +1,26 @@
+meta {
+  name: Add Product to Cart - with auth - should succeed
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/cart/products/12
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+tests {
+  var items = pm.response.json().items;
+  var total = pm.response.json().total;
+  
+  test("Add to cart logged in should succeed", function() {
+      expect(res.getStatus()).to.equal(200);
+      pm.expect(items).to.not.be.empty;
+      pm.expect(total).to.equal(149.99);
+  });
+}

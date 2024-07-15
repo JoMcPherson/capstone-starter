@@ -1,0 +1,20 @@
+meta {
+  name: Get Categories - after add
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/categories
+  body: none
+  auth: none
+}
+
+tests {
+  var items = pm.response.json();
+  
+  test("Categories should be " + items.length, function() {
+      expect(res.getStatus()).to.equal(200);
+      pm.expect(items.length).to.equal(4);
+  });
+}

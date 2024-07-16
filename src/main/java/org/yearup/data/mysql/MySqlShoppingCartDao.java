@@ -47,7 +47,6 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     }
 
     private ShoppingCart mapRow(ResultSet row) throws SQLException {
-        int userId = row.getInt("user_id");
         int productId = row.getInt("product_id");
         int quantity = row.getInt("quantity");
         Product product = productDao.getById(productId);

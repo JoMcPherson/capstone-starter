@@ -27,15 +27,17 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     @Override
     public ShoppingCart getByUserId(int userId) {
         String sql = "SELECT * FROM shopping_cart WHERE user_id = ?";
-        ShoppingCart cart = null;
+        ShoppingCart cart = new ShoppingCart();
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    cart = mapRow(resultSet);
+                while (resultSet.next()) {
+                    cart.add(mapRow(resultSet));
+                    System.out.println(mapRow(resultSet)+"maprowresultsset");
+
                 }
             }
 
@@ -46,16 +48,13 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         return cart;
     }
 
-    private ShoppingCart mapRow(ResultSet row) throws SQLException {
+    private ShoppingCartItem mapRow(ResultSet row) throws SQLException {
         int productId = row.getInt("product_id");
         int quantity = row.getInt("quantity");
         Product product = productDao.getById(productId);
         ShoppingCartItem cartItem = new ShoppingCartItem();
         cartItem.setProduct(product);
         cartItem.setQuantity(quantity);
-        cartItem.setDiscountPercent(BigDecimal.valueOf(10));
-        ShoppingCart cart = new ShoppingCart();
-        cart.add(cartItem);
-        return cart;
+        return cartItem;
     }
 }

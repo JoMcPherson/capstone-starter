@@ -38,7 +38,7 @@ public class ProfileController
 
     // each method in this controller requires a Principal object as a parameter
     @GetMapping
-    public String getProfile(Principal principal)
+    public Profile getProfile(Principal principal)
     {
         Profile profile = new Profile();
         try
@@ -46,11 +46,11 @@ public class ProfileController
             // get the currently logged in username
             String userName = principal.getName();
 //            // find database user by userId
-//            User user = userDao.getByUserName(userName);
-//            int userId = user.getId();
-//            profile = profileDao.getByUserId(userId);
-            System.out.println("username" + userName);
-            return userName;
+            User user = userDao.getByUserName(userName);
+            int userId = user.getId();
+            profile = profileDao.getByUserId(userId);
+
+            return profile;
         }
         catch(Exception e)
         {

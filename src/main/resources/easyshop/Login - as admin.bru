@@ -1,0 +1,26 @@
+meta {
+  name: Login - as admin
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "admin",
+    "password": "password"
+  }
+}
+
+tests {
+  // bru.setEnvVar("adminToken", pm.response.json().token)
+  
+  test("Admin Login should succeed", function() {
+      expect(res.getStatus()).to.equal(200);
+  });
+}

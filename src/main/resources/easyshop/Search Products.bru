@@ -1,0 +1,25 @@
+meta {
+  name: Search Products
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{baseUrl}}/products?cat=1&minPrice=80&maxPrice=90
+  body: none
+  auth: none
+}
+
+query {
+  cat: 1
+  minPrice: 80
+  maxPrice: 90
+}
+
+tests {
+  var data = pm.response.json();
+  
+  test('Number of products = ' + data.length, function () {
+      pm.expect(data.length).to.equal(1);
+  });
+}

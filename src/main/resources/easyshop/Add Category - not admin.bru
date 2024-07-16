@@ -1,0 +1,29 @@
+meta {
+  name: Add Category - not admin
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/categories
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+body:json {
+  {
+      "name": "Demo",
+      "description": "Some demo category."
+  }
+}
+
+tests {
+  
+  test("Category insert as non admin should fail", function() {
+      expect(res.getStatus()).to.equal(403);
+  });
+}

@@ -69,15 +69,16 @@ public class CategoriesController
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Category> addCategory(@RequestBody Category category)
     {
+        Category categoryNew = new Category();
         try
         {
-            categoryDao.create(category);
+            categoryNew = categoryDao.create(category);
         }
         catch(Exception ex)
         {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
         }
-        return new ResponseEntity<>(category, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(categoryNew, HttpStatus.CREATED);
     }
 
     // add annotation to call this method for a PUT (update) action - the url path must include the categoryId

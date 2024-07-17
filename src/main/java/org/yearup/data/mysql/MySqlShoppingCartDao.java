@@ -34,8 +34,8 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
 
             statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    cart = mapRow(resultSet);
+                   while (resultSet.next()) {
+                    cart.add(mapRow(resultSet));
                 }
             }
 
@@ -45,6 +45,22 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
 
         return cart;
     }
+
+
+    public void deleteByUserId(int userId) {
+        String sql = "DELETE FROM shopping_cart WHERE user_id = ?";
+
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+                statement.setInt(1, userId);
+                statement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public void addProductToCart(ShoppingCart cart, int userId, int addedProductId) {
@@ -100,7 +116,7 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         }
     }
 
-    private ShoppingCart mapRow(ResultSet row) throws SQLException {
+    private ShoppingCartItem mapRow(ResultSet row) throws SQLException {
         int productId = row.getInt("product_id");
         int quantity = row.getInt("quantity");
         Product product = productDao.getById(productId);
@@ -108,8 +124,6 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         cartItem.setProduct(product);
         cartItem.setQuantity(quantity);
         cartItem.setDiscountPercent(BigDecimal.valueOf(10));
-        ShoppingCart cart = new ShoppingCart();
-        cart.add(cartItem);
-        return cart;
+        return cartItem;
     }
 }

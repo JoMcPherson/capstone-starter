@@ -78,6 +78,7 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao
         try(Connection connection = getConnection())
         {
             PreparedStatement ps = connection.prepareStatement(sql);
+            System.out.println(profile.getFirstName());
             ps.setString(1, profile.getFirstName());
             ps.setString(2, profile.getLastName());
             ps.setString(3, profile.getPhone());
@@ -96,6 +97,7 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao
         {
             throw new RuntimeException(e);
         }
+
         return profile;
     }
 

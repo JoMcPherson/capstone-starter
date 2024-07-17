@@ -1,5 +1,6 @@
 package org.yearup.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,8 +25,11 @@ public class ShoppingCartController
 {
 
     // a shopping cart requires
+    @Autowired
     private ShoppingCartDao shoppingCartDao;
+    @Autowired
     private UserDao userDao;
+    @Autowired
     private ProductDao productDao;
 
     // each method in this controller requires a Principal object as a parameter
@@ -56,24 +60,19 @@ public class ShoppingCartController
     // https://localhost:8080/cart/products/15 (15 is the productId to be updated)
     // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
     @PutMapping("/products/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ShoppingCartItem> updateShoppingCartItem(@PathVariable int id,
                                                                    @RequestBody ShoppingCartItem shoppingCartItem,
                                                                    Principal principal)
     {
-        //Update the Shopping Cart Item By Id
         try
         {
-            //Update the Shopping Cart Item Identified by Id
             shoppingCartDao.updateShoppingCartItem(id, shoppingCartItem, principal);
         }
         catch(Exception ex)
         {
-            //If an exception occurs, throw a status code error
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
         }
-        //Return a Status 200 to indicate that the request was successful
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     // add a DELETE method to clear all products from the current users cart

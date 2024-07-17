@@ -1,4 +1,6 @@
 package org.yearup.data.mysql;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yearup.data.CategoryDao;
@@ -21,7 +23,6 @@ import java.sql.SQLException;
 
 import static java.sql.DriverManager.getConnection;
 
-
 @Component
 public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDao
 {
@@ -30,7 +31,7 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
 
 
     @Autowired
-    public MySqlShoppingCartDao(DataSource dataSource, ProductDao productDao) {
+    public MySqlShoppingCartDao(DataSource dataSource, ProductDao productDao, UserDao userDao) {
         super(dataSource);
         this.productDao = productDao;
         this.userDao = userDao;
@@ -58,61 +59,22 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         return cart;
     }
 
-//    public void updateShoppingCartItem(int productId, ShoppingCartItem shoppingCartItem, Principal principal){
-//        String userName = principal.getName();
-//        int userId;
-//        try {
-//            User user = userDao.getByUserName(userName);
-//            userId = user.getId();
-//        } catch (Exception e) {
-//            throw new RuntimeException("Error fetching user information for username: " + userName, e);
-//        }
-//
-//        //Sql query to update the quantity of a shopping cart item
-//        String sql = "UPDATE shopping_cart SET quantity = ? WHERE product_id = ?";
-//
-//        try (Connection connection = getConnection();
-//             PreparedStatement statement = connection.prepareStatement(sql)) {
-//
-//            //Set the parameters for the Prepared Statement
-//            statement.setInt(1, shoppingCartItem.getQuantity());
-//            statement.setInt(2, userId);
-//            statement.setInt(3, productId);
-//
-//            //Execute the update query
-//            int rowsUpdated = statement.executeUpdate();
-//
-//            // Check if any rows were updated
-//            if (rowsUpdated == 0) {
-//                throw new IllegalArgumentException("Product with ID " + productId + " is not in the shopping cart.");
-//            }
-//
-//        } catch (SQLException e) {
-//            throw new RuntimeException("Error updating shopping cart item with product ID: " + productId, e);
-//        }
-//    }
-
-
     public void updateShoppingCartItem(int productId, ShoppingCartItem shoppingCartItem, Principal principal){
-        String userName = principal.getName();
-//            // find database user by userId
-        //User user = userDao.getByUserName(userName);
-        //int userId = user.getId();
+        String sql = "UPDATE shopping_cart SET quantity = ? WHERE product_id = ? AND user_id = ?";
 
-        //Sql query to update the quantity of a shopping cart item
-        String sql = "UPDATE shopping_cart SET quantity = ? WHERE product_id = ?";
+        String userName = principal.getName();
+        User user = userDao.getByUserName(userName);
+        int userId = user.getId();
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            //Set the parameters for the Prepared Statement
             statement.setInt(1, shoppingCartItem.getQuantity());
             statement.setInt(2, productId);
+            statement.setInt(3, userId);
 
-            //Execute the update query
             int rowsUpdated = statement.executeUpdate();
 
-            // Check if any rows were updated
             if (rowsUpdated == 0) {
                 throw new IllegalArgumentException("Product with ID " + productId + " is not in the shopping cart.");
             }

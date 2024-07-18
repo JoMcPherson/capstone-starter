@@ -1,11 +1,16 @@
 package org.yearup.data.mysql;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yearup.data.ProductDao;
 import org.yearup.data.ShoppingCartDao;
+import org.yearup.data.UserDao;
 import org.yearup.models.ShoppingCart;
 import org.yearup.models.Product;
 import org.yearup.models.ShoppingCartItem;
+import org.yearup.models.User;
+
+import java.security.Principal;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -18,10 +23,13 @@ import java.util.Map;
 @Component
 public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDao {
     private final ProductDao productDao;
+    private UserDao userDao = null;
 
-    public MySqlShoppingCartDao(DataSource dataSource, ProductDao productDao) {
+    @Autowired
+    public MySqlShoppingCartDao(DataSource dataSource, ProductDao productDao, UserDao userDao) {
         super(dataSource);
         this.productDao = productDao;
+        this.userDao = userDao;
     }
 
     @Override
@@ -52,16 +60,40 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         String sql = "DELETE FROM shopping_cart WHERE user_id = ?";
 
         try (Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-                statement.setInt(1, userId);
-                statement.executeUpdate();
+            statement.setInt(1, userId);
+            statement.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public void updateShoppingCartItem(int productId, ShoppingCartItem shoppingCartItem, Principal principal){
+        String sql = "UPDATE shopping_cart SET quantity = ? WHERE product_id = ? AND user_id = ?";
+
+        String userName = principal.getName();
+        User user = userDao.getByUserName(userName);
+        int userId = user.getId();
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, shoppingCartItem.getQuantity());
+            statement.setInt(2, productId);
+            statement.setInt(3, userId);
+
+            int rowsUpdated = statement.executeUpdate();
+
+            if (rowsUpdated == 0) {
+                throw new IllegalArgumentException("Product with ID " + productId + " is not in the shopping cart.");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating shopping cart item with product ID: " + productId, e);
+        }
+    }
 
     @Override
     public void addProductToCart(ShoppingCart cart, int userId, int addedProductId) {

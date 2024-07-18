@@ -100,6 +100,19 @@ public class ShoppingCartController
     // add a PUT method to update an existing product in the cart - the url should be
     // https://localhost:8080/cart/products/15 (15 is the productId to be updated)
     // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
+    @PutMapping("/products/{id}")
+    public ResponseEntity<ShoppingCartItem> updateShoppingCartItem(@PathVariable int id, @RequestBody ShoppingCartItem shoppingCartItem, Principal principal)
+    {
+        try
+        {
+            shoppingCartDao.updateShoppingCartItem(id, shoppingCartItem, principal);
+        }
+        catch(Exception ex)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
     // add a DELETE method to clear all products from the current users cart
     // https://localhost:8080/cart
@@ -127,4 +140,3 @@ public class ShoppingCartController
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
-

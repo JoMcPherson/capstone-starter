@@ -8,7 +8,6 @@ import java.security.Principal;
 public interface ShoppingCartDao
 {
     ShoppingCart getByUserId(int userId);
-    // add additional method signatures here
 
     void updateShoppingCartItem(int productId, ShoppingCartItem shoppingCartItem, Principal principal);
 

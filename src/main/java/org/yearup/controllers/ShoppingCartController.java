@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
+
 import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.ProductDao;
 import org.yearup.data.ShoppingCartDao;
@@ -131,6 +132,7 @@ public class ShoppingCartController
 
             shoppingCartDao.deleteByUserId(userId);
 
+
         }
         catch(Exception e)
         {
@@ -139,4 +141,7 @@ public class ShoppingCartController
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+
 }
+

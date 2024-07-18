@@ -3,13 +3,13 @@ package org.yearup.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.ProductDao;
 import org.yearup.data.ShoppingCartDao;
 import org.yearup.data.UserDao;
-import org.yearup.models.Category;
+import org.yearup.models.Product;
 import org.yearup.models.ShoppingCart;
 import org.yearup.models.ShoppingCartItem;
 import org.yearup.models.User;
@@ -17,22 +17,27 @@ import org.yearup.models.User;
 import java.security.Principal;
 
 // convert this class to a REST controller
-@RestController
 // only logged in users should have access to these actions
-@RequestMapping("/cart")
+@RestController
+@RequestMapping("cart")
 @CrossOrigin
+
 public class ShoppingCartController
 {
-
     // a shopping cart requires
-    @Autowired
     private ShoppingCartDao shoppingCartDao;
-    @Autowired
     private UserDao userDao;
-    @Autowired
     private ProductDao productDao;
 
+    @Autowired
+    public ShoppingCartController(ShoppingCartDao shoppingCartDao, UserDao userDao, ProductDao productDao) {
+        this.shoppingCartDao = shoppingCartDao;
+        this.userDao = userDao;
+        this.productDao = productDao;
+    }
+
     // each method in this controller requires a Principal object as a parameter
+    @GetMapping
     public ShoppingCart getCart(Principal principal)
     {
         try
@@ -44,7 +49,7 @@ public class ShoppingCartController
             int userId = user.getId();
 
             // use the shoppingcartDao to get all items in the cart and return the cart
-            return null;
+            return shoppingCartDao.getByUserId(userId);
         }
         catch(Exception e)
         {
@@ -54,15 +59,49 @@ public class ShoppingCartController
 
     // add a POST method to add a product to the cart - the url should be
     // https://localhost:8080/cart/products/15 (15 is the productId to be added
+    @PostMapping("/products/{productId}")
+    public ResponseEntity<String> addToCart(@PathVariable int productId, Principal principal) {
+        try {
+            String username = principal.getName();
+            User user = userDao.getByUserName(username);
+            int userId = user.getId();
 
+            Product product = productDao.getById(productId);
+            if (product == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
+            }
+
+            ShoppingCart cart = shoppingCartDao.getByUserId(userId);
+            if (cart == null) {
+                cart = new ShoppingCart();
+            }
+
+            ShoppingCartItem cartItem;
+            if (cart.contains(productId)) {
+                cartItem = cart.get(productId);
+                cartItem.setQuantity(cartItem.getQuantity() + 1);
+            } else {
+                cartItem = new ShoppingCartItem();
+                cartItem.setProduct(product);
+                cartItem.setQuantity(1);
+                cart.add(cartItem);
+            }
+
+            shoppingCartDao.addProductToCart(cart, userId, productId); // Save or update the shopping cart
+
+            String message = "Product with ID " + productId + " added to cart successfully.";
+            return ResponseEntity.status(HttpStatus.OK).body(message);
+
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.", e);
+        }
+    }
 
     // add a PUT method to update an existing product in the cart - the url should be
     // https://localhost:8080/cart/products/15 (15 is the productId to be updated)
     // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
     @PutMapping("/products/{id}")
-    public ResponseEntity<ShoppingCartItem> updateShoppingCartItem(@PathVariable int id,
-                                                                   @RequestBody ShoppingCartItem shoppingCartItem,
-                                                                   Principal principal)
+    public ResponseEntity<ShoppingCartItem> updateShoppingCartItem(@PathVariable int id, @RequestBody ShoppingCartItem shoppingCartItem, Principal principal)
     {
         try
         {
@@ -77,5 +116,27 @@ public class ShoppingCartController
 
     // add a DELETE method to clear all products from the current users cart
     // https://localhost:8080/cart
+    @DeleteMapping
+    public ResponseEntity<HttpStatus> deleteCart(Principal principal) {
+        try
+        {
+            String userName = principal.getName();
 
+            if (userName == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            User user = userDao.getByUserName(userName);
+            int userId = user.getId();
+
+            shoppingCartDao.deleteByUserId(userId);
+
+        }
+        catch(Exception e)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

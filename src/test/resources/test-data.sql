@@ -1,3 +1,12 @@
+DROP TABLE IF EXISTS shopping_cart;
+DROP TABLE IF EXISTS order_line_items;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS profiles;
+DROP TABLE IF EXISTS users;
+
+
 CREATE TABLE users (
                        user_id SERIAL PRIMARY KEY,
                        username VARCHAR(50) NOT NULL,

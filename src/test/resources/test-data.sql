@@ -111,3 +111,6 @@ VALUES ('Smartphone', 499.99, 1, 'A powerful and feature-rich smartphone for all
        ('Cookware Set', 149.99, 3, 'A comprehensive set of high-quality cookware for all your culinary needs.', 'cookware-set.jpg', 50, TRUE, 'Red'),
        ('Coffee Maker', 79.99, 3, 'Brew your favorite coffee with this efficient and stylish coffee maker.', 'coffee-maker.jpg', 30, FALSE, 'Black'),
        ('Kitchen Knife Set', 59.99, 3, 'A set of sharp and durable knives for effortless food preparation.', 'knife-set.jpg', 40, TRUE, 'Silver');
+
+INSERT INTO shopping_cart (user_id, product_id, quantity)
+VALUES  (1, 1, 3);

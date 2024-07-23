@@ -59,7 +59,7 @@ public class ProfileController
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... TOTALLY our bad.");
         }
     }
-
+  
     @PutMapping
     public void updateProfile(Principal principal, @RequestBody Profile profile){
         try {

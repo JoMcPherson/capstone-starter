@@ -3,6 +3,7 @@ package org.yearup.data.mysql;
 import org.springframework.stereotype.Component;
 import org.yearup.models.Profile;
 import org.yearup.data.ProfileDao;
+import org.yearup.models.User;
 
 import javax.sql.DataSource;
 import java.sql.*;

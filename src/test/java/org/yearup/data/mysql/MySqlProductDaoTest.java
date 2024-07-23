@@ -1,6 +1,5 @@
 package org.yearup.data.mysql;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.yearup.models.Product;
@@ -10,8 +9,8 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class MySqlProductDaoTest extends BaseDaoTestClass
 {
@@ -49,6 +48,32 @@ class MySqlProductDaoTest extends BaseDaoTestClass
     }
 
     @Test
+    public void update_should_correctly_update_field() {
+        Product product = new Product() {{
+            setProductId(1);
+            setName("Smartphone");
+            setPrice(new BigDecimal("4.99"));
+            setCategoryId(1);
+            setDescription("A powerful and feature-rich smartphone for all your communication needs.");
+            setColor("Black");
+            setStock(50);
+            setFeatured(false);
+            setImageUrl("smartphone.jpg");
+        }};
+
+        dao.update(1, product);
+        Product actual = dao.getById(1);
+        assertEquals(actual.getName(), product.getName());
+        assertEquals(actual.getPrice(), product.getPrice());
+        assertEquals(actual.getCategoryId(), product.getCategoryId());
+        assertEquals(actual.getDescription(), product.getDescription());
+        assertEquals(actual.getColor(), product.getColor());
+        assertEquals(actual.getStock(), product.getStock());
+        assertEquals(actual.isFeatured(), product.isFeatured());
+        assertEquals(actual.getImageUrl(), product.getImageUrl());
+    }
+
+    @Test
     public void testCreateProduct(){
         Product expected = new Product();
         expected.setName("Test Product");
@@ -78,5 +103,10 @@ class MySqlProductDaoTest extends BaseDaoTestClass
             assertEquals(categoryId, product.getCategoryId(), "Because the category ID of the product should match the provided category ID.");
         }
     }
+    @Test
+    public void delete_should_remove_product(){
+        dao.delete(10);
+        assertNull(dao.getById(10));
+    }
 
-}
+    }

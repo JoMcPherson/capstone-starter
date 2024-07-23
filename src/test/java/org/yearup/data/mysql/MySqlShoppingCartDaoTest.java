@@ -12,8 +12,10 @@ import org.yearup.models.ShoppingCartItem;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Map;
 
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -57,9 +59,25 @@ class MySqlShoppingCartDaoTest extends BaseDaoTestClass {
         when(productDao.getById(1)).thenReturn(expectedProduct);
         // act
 
-        var actual = dao.getByUserId(userId);
+        var actualCart = dao.getByUserId(userId);
 
         // assert
-        assertEquals(expected.getTotal(), actual.getTotal(), "Check shopping cart from database matches");
+        assertThat(actualCart.getItems(), samePropertyValuesAs(expected.getItems()));
     }
+    @Test
+    public void deleteByUserID() throws SQLException {
+        // arrange
+        int userId = 1;
+
+        // act
+
+        dao.deleteByUserId(userId);
+        var actual = dao.getByUserId(userId);
+        BigDecimal zero = BigDecimal.ZERO;
+
+        // assert
+        assertEquals(zero,actual.getTotal(), "Check shopping cart from database matches");
+    }
+
+
 }

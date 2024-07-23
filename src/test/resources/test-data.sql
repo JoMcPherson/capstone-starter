@@ -6,7 +6,10 @@ DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS profiles;
 DROP TABLE IF EXISTS users;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bc8d070 (Added createProduct and listByCategoryId tests)
 CREATE TABLE users (
                        user_id SERIAL PRIMARY KEY,
                        username VARCHAR(50) NOT NULL,

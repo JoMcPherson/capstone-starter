@@ -1,5 +1,6 @@
 package org.yearup.data.mysql;
 
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.yearup.models.Product;
 import org.yearup.data.ProductDao;
@@ -96,6 +97,7 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
     public Product getById(int productId)
     {
         String sql = "SELECT * FROM products WHERE product_id = ?";
+
         try (Connection connection = getConnection())
         {
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -202,8 +204,8 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
         {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, productId);
-
             statement.executeUpdate();
+
         }
         catch (SQLException e)
         {

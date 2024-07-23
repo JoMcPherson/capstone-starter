@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.yearup.data.UserDao;
 import org.yearup.models.Product;
 import org.yearup.models.ShoppingCart;
 import org.yearup.models.ShoppingCartItem;
@@ -23,12 +24,16 @@ import static org.mockito.Mockito.when;
 class MySqlShoppingCartDaoTest extends BaseDaoTestClass {
     @Mock
     private MySqlProductDao productDao;
+
+    @Mock
+    private UserDao userDao;
+
     @InjectMocks
     private MySqlShoppingCartDao dao;
 
     @BeforeEach
     public void setup() {
-        dao = new MySqlShoppingCartDao(dataSource, productDao);
+        dao = new MySqlShoppingCartDao(dataSource, productDao, userDao);
     }
 
     @Test

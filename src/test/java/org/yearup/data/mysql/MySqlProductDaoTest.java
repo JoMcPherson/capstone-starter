@@ -67,8 +67,14 @@ class MySqlProductDaoTest extends BaseDaoTestClass
         Product actual = dao.getById(1);
 
 
-        assertThat(actual, samePropertyValuesAs(product));
-
+        assertEquals(actual.getName(), product.getName());
+        assertEquals(actual.getPrice(), product.getPrice());
+        assertEquals(actual.getCategoryId(), product.getCategoryId());
+        assertEquals(actual.getDescription(), product.getDescription());
+        assertEquals(actual.getColor(), product.getColor());
+        assertEquals(actual.getStock(), product.getStock());
+        assertEquals(actual.isFeatured(), product.isFeatured());
+        assertEquals(actual.getImageUrl(), product.getImageUrl());
     }
 
     @Test

@@ -6,7 +6,6 @@ DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS profiles;
 DROP TABLE IF EXISTS users;
 
-
 CREATE TABLE users (
                        user_id SERIAL PRIMARY KEY,
                        username VARCHAR(50) NOT NULL,
@@ -83,7 +82,8 @@ CREATE TABLE shopping_cart (
 /*  INSERT Users  */
 INSERT INTO users (username, hashed_password, role)
 VALUES ('user','$2a$10$NkufUPF3V8dEPSZeo1fzHe9ScBu.LOay9S3N32M84yuUM2OJYEJ/.','ROLE_USER'),
-       ('admin','$2a$10$lfQi9jSfhZZhfS6/Kyzv3u3418IgnWXWDQDk7IbcwlCFPgxg9Iud2','ROLE_ADMIN');
+       ('admin','$2a$10$lfQi9jSfhZZhfS6/Kyzv3u3418IgnWXWDQDk7IbcwlCFPgxg9Iud2','ROLE_ADMIN'),
+         ('user3','$2a$10$lfQi9jSfhZZhfS6/Kyzv3u3418IgnWXWDQDk7IbcwlCFPgxg9Iud2','ROLE_ADMIN');
 
 /* INSERT Profiles */
 INSERT INTO profiles (user_id, first_name, last_name, phone, email, address, city, state, zip)
@@ -111,3 +111,6 @@ VALUES ('Smartphone', 499.99, 1, 'A powerful and feature-rich smartphone for all
        ('Cookware Set', 149.99, 3, 'A comprehensive set of high-quality cookware for all your culinary needs.', 'cookware-set.jpg', 50, TRUE, 'Red'),
        ('Coffee Maker', 79.99, 3, 'Brew your favorite coffee with this efficient and stylish coffee maker.', 'coffee-maker.jpg', 30, FALSE, 'Black'),
        ('Kitchen Knife Set', 59.99, 3, 'A set of sharp and durable knives for effortless food preparation.', 'knife-set.jpg', 40, TRUE, 'Silver');
+
+INSERT INTO shopping_cart (user_id, product_id, quantity)
+VALUES  (1, 1, 3);

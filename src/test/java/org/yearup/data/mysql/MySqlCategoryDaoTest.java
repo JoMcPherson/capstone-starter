@@ -2,18 +2,33 @@ package org.yearup.data.mysql;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.yearup.models.Category;
+
+
+import java.sql.*;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.yearup.models.Category;
 
 import java.sql.SQLException;
+
 import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+
+
 public class MySqlCategoryDaoTest extends BaseDaoTestClass{
 
     private MySqlCategoryDao mySqlCategoryDao;
@@ -22,6 +37,18 @@ public class MySqlCategoryDaoTest extends BaseDaoTestClass{
     public void setup()
     {
         mySqlCategoryDao = new MySqlCategoryDao(dataSource);
+    }
+  
+      // Add more tests for other methods
+    @Test
+    public void testCreateCategory() {
+        Category expected = new Category();
+        expected.setName("Shoes");
+        expected.setDescription("A variety of shoes");
+
+        Category actual = mySqlCategoryDao.create(expected);
+
+        assertThat(actual, samePropertyValuesAs(expected, "categoryId"));
     }
 
     @Test
@@ -46,7 +73,21 @@ public class MySqlCategoryDaoTest extends BaseDaoTestClass{
         assertEquals("Home & Kitchen", category3.getName());
         assertEquals("Find everything you need to decorate and equip your home.", category3.getDescription());
     }
+    @Test
+    public void testGetCategoryById() throws SQLException {
+        int categoryId = 1;
+        Category expected = new Category();
+        expected.setCategoryId(1);
+        expected.setName("Electronics");
+        expected.setDescription("Explore the latest gadgets and electronic devices.");
 
+        var actual = mySqlCategoryDao.getById(categoryId);
+
+        assertNotNull(actual, "Returned category should not be null");
+        assertEquals(expected.getCategoryId(), actual.getCategoryId(), "Category ID should match");
+        assertEquals(expected.getName(), actual.getName(), "Name should match");
+        assertEquals(expected.getDescription(), actual.getDescription(), "Description should match");
+    }
     // Add more tests for other methods
 
     @Test
@@ -74,3 +115,4 @@ public class MySqlCategoryDaoTest extends BaseDaoTestClass{
         assertNull(mySqlCategoryDao.getById(categoryIdToDelete));
     }
 }
+
